@@ -5,11 +5,14 @@
 #include "QDir"
 #include "QTextBlock"
 
+
 Basic::Basic(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Basic)
 {
     ui->setupUi(this);
+    ui->textEdit->setText("0");
+       ui->textEdit->moveCursor(QTextCursor::End);
 }
 
 Basic::~Basic()
@@ -17,6 +20,13 @@ Basic::~Basic()
     delete ui;
 }
 
+
+double sumInMemory = 0.0;
+double sumSoFar = 0.0;
+double factorSoFar = 0.0;
+bool waitingForOperand = true;
+bool clickedPlus=false;
+bool clickedMinus=false;
 // modify formula notation
 string modifyFormula(string argument) {
     string return_str;
@@ -85,8 +95,10 @@ vector<string> infixToPostfix(vector<string> formula) {
 
     for(i = 0; i < formula.size(); i++) {
         token = formula[i];
+
         if(FormulaElement::isNumber(token) || FormulaElement::isVariable(token)) {
-            return_vec.push_back(token); continue;
+
+            return_vec.push_back(token);continue;
         }
         if(FormulaElement::isFunction(token)) {
             operator_stack.push(token); continue;
@@ -166,12 +178,30 @@ FormulaElement* getElement(string s) {
     if(s == "sin") {
         return new SineFunctionElement;
     }
+    if(s == "tan") {
+        return new TanFunctionElement;
+    }
+    if(s == "acos") {
+        return new ACosineFunctionElement;
+    }
+    if(s == "asin") {
+        return new ASineFunctionElement;
+    }
+    if(s == "atan") {
+        return new ATanFunctionElement;
+    }
     if(FormulaElement::isVariable(s)) {
         return new VariableElement(s);
     }
+    /*if(FormulaElement::isNumber(s)) {
+        return new ConstantElement(stod(s));
+    }*/
     if(FormulaElement::isNumber(s)) {
+        if(s[0] == '~')
+            s[0] = '-';
         return new ConstantElement(stod(s));
     }
+
     return new ConstantElement(strtod(s.c_str(), NULL));
 }
 
@@ -197,10 +227,11 @@ FormulaElement* representFormula(vector<string> tokens, vector<FormulaElement*> 
     stack<FormulaElement*> Obj_buffer2;
     int i;
 
+
     for(i = 0; i < tokens.size(); i++) {
         if(FormulaElement::isNumber(tokens[i]) || FormulaElement::isVariable(tokens[i]))
             Obj_buffer1.push(objTokens[i]);
-        else {
+    else {
             FunctionElement* funObj = dynamic_cast<FunctionElement*>(objTokens[i]);
             OperatorInfo op_info = FormulaElement::getOPInfo(tokens[i]);
             int args = op_info.arguments;
@@ -270,6 +301,26 @@ string printResult(FormulaElement *funObj) {
              return cosObj->toString();
             break;
         }
+        case FLAG_TAN: {
+            TanFunctionElement* tanObj = dynamic_cast<TanFunctionElement*>(funObj);
+             return tanObj->toString();
+            break;
+        }
+        case FLAG_ASINE: {
+            ASineFunctionElement* asinObj = dynamic_cast<ASineFunctionElement*>(funObj);
+              return asinObj->toString();
+            break;
+        }
+        case FLAG_ACOSINE: {
+            ACosineFunctionElement* acosObj = dynamic_cast<ACosineFunctionElement*>(funObj);
+             return acosObj->toString();
+            break;
+        }
+        case FLAG_ATAN: {
+            ATanFunctionElement* atanObj = dynamic_cast<ATanFunctionElement*>(funObj);
+             return atanObj->toString();
+            break;
+        }
         case FLAG_POWER: {
             PowerFunctionElement* powObj = dynamic_cast<PowerFunctionElement*>(funObj);
           return powObj->toString();
@@ -324,9 +375,28 @@ double printEvaluation(FormulaElement *funObj) {
               return sinObj->evaluate();
             break;
         }
+        case FLAG_TAN: {
+            TanFunctionElement* tanObj = dynamic_cast<TanFunctionElement*>(funObj);
+              return tanObj->evaluate();
+            break;
+        }
         case FLAG_COSINE: {
             CosineFunctionElement* cosObj = dynamic_cast<CosineFunctionElement*>(funObj);
              return cosObj->evaluate();
+            break;
+        }case FLAG_ASINE: {
+            ASineFunctionElement* asinObj = dynamic_cast<ASineFunctionElement*>(funObj);
+              return asinObj->evaluate();
+            break;
+        }
+        case FLAG_ATAN: {
+            ATanFunctionElement* atanObj = dynamic_cast<ATanFunctionElement*>(funObj);
+              return atanObj->evaluate();
+            break;
+        }
+        case FLAG_ACOSINE: {
+            ACosineFunctionElement* acosObj = dynamic_cast<ACosineFunctionElement*>(funObj);
+             return acosObj->evaluate();
             break;
         }
         case FLAG_POWER: {
@@ -355,15 +425,18 @@ void Basic::on_pushButton_clicked()
 
     tokens = tokenize(modifyFormula(exp));
     fixed=infixToPostfix(tokens);
+
     elements=getObjectTokens(fixed);
     for(int i=0;i<tokens.size();i++){
         cout<<tokens.at(i)<<endl;
+        cout<<"go2";
     }
+
     f = representFormula(fixed, elements);
-
+cout<<"go3";
     ui->textEdit->append(QString::fromStdString(printResult(f))+"\n");
-    FunctionElement *func = dynamic_cast<FunctionElement*>(f);
 
+    FunctionElement *func = dynamic_cast<FunctionElement*>(f);
     vector<string> vars;
 
     double temp;
@@ -415,6 +488,7 @@ void Basic::on_pushButton_clicked()
     //Prints the result
 
     ui->textEdit->append(QString::number(printEvaluation(func)));
+
     //set cursor position to last line
     ui->textEdit->setFocus();
 
@@ -424,14 +498,26 @@ void Basic::on_pushButton_clicked()
 
 void Basic::on_btn1_clicked()
 {
-    ui->textEdit->setText(ui->textEdit->toPlainText()+"1");
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("1");
     ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"1");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
 }
 
 void Basic::on_btn2_clicked()
 {
-   ui->textEdit->setText(ui->textEdit->toPlainText()+"2");
-  ui->textEdit->moveCursor(QTextCursor::End);
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("2");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"2");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
 }
 
 void Basic::on_btnplus_clicked()
@@ -442,44 +528,86 @@ void Basic::on_btnplus_clicked()
 
 void Basic::on_btn3_clicked()
 {
-    ui->textEdit->setText(ui->textEdit->toPlainText()+"3");
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("3");
     ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"3");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
 }
 
 void Basic::on_btn4_clicked()
 {
-    ui->textEdit->setText(ui->textEdit->toPlainText()+"4");
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("4");
     ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"4");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
 }
 
 void Basic::on_btn5_clicked()
 {
-    ui->textEdit->setText(ui->textEdit->toPlainText()+"5");
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("5");
     ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"5");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
 }
 
 void Basic::on_btn6_clicked()
 {
-    ui->textEdit->setText(ui->textEdit->toPlainText()+"6");
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("6");
     ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"6");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
 }
 
 void Basic::on_btn7_clicked()
 {
-    ui->textEdit->setText(ui->textEdit->toPlainText()+"7");
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("7");
     ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"7");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
 }
 
 void Basic::on_btn8_clicked()
 {
-    ui->textEdit->setText(ui->textEdit->toPlainText()+"8");
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("8");
     ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"8");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
 }
 
 void Basic::on_btn9_clicked()
 {
-    ui->textEdit->setText(ui->textEdit->toPlainText()+"9");
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("9");
     ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"9");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
 }
 
 void Basic::on_btnminus_clicked()
@@ -502,6 +630,199 @@ void Basic::on_btndiv_clicked()
 
 void Basic::on_btn0_clicked()
 {
-    ui->textEdit->setText(ui->textEdit->toPlainText()+"0");
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("0");
     ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"0");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_btndot_clicked()
+{
+    ui->textEdit->setText(ui->textEdit->toPlainText()+".");
+    ui->textEdit->moveCursor(QTextCursor::End);
+}
+
+void Basic::on_pushButton_37_clicked()
+{
+    ui->textEdit->setText(ui->textEdit->toPlainText()+"~");
+    ui->textEdit->moveCursor(QTextCursor::End);
+}
+
+void Basic::on_btnbck_clicked()
+{
+    QString text = ui->textEdit->toPlainText();
+         text.chop(1);
+         if (text.isEmpty()) {
+             text = "0";
+         }
+         ui->textEdit->setText(text);
+   // ui->textEdit->setText(ui->textEdit->toPlainText()+".");
+    ui->textEdit->moveCursor(QTextCursor::End);
+}
+
+void Basic::on_btnclr_clicked()
+{
+    ui->textEdit->setText("0");
+    sumSoFar=0.0;
+    clickedMinus=false;
+    clickedPlus=false;
+}
+
+void Basic::on_pushButton_39_clicked()
+{
+
+    if(clickedPlus==false){
+    QString text = ui->textEdit->textCursor().block().text().trimmed().toLatin1();
+    string exp=text.toStdString();
+    sumSoFar=stod(exp);
+    clickedPlus=true;
+    }else{
+        clickedPlus=true;
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"+"+QString::number(sumSoFar));
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_pushButton_40_clicked()
+{
+    if(clickedMinus==false){
+    QString text = ui->textEdit->textCursor().block().text().trimmed().toLatin1();
+    string exp=text.toStdString();
+    sumSoFar=stod(exp);
+    clickedMinus=true;
+    }else{
+        clickedMinus=true;
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"-"+QString::number(sumSoFar));
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_pushButton_36_clicked()
+{
+    sumSoFar=0.0;
+    clickedMinus=false;
+    clickedPlus=false;
+}
+
+void Basic::on_btnpcn_clicked()
+{
+    ui->textEdit->setText(ui->textEdit->toPlainText()+QString::number(sumSoFar));
+    ui->textEdit->moveCursor(QTextCursor::End);
+}
+
+void Basic::on_BasicCal_clicked()
+{
+
+
+}
+
+void Basic::on_ScientificCal_clicked()
+{
+
+
+}
+
+void Basic::on_pushButton_43_clicked()
+{
+
+}
+
+void Basic::on_btnlbrkt_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("(");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"(");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_btnrbrkt_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText(")");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+")");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_pushButton_24_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("sin");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"sin");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_pushButton_26_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("cos");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"cos");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_pushButton_23_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("tan");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"tan");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_pushButton_31_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("asin");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"asin");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_pushButton_33_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("acos");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"acos");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_pushButton_32_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("atan");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"atan");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
 }

@@ -41,6 +41,10 @@
 #define FLAG_SINE      5
 #define FLAG_COSINE    6
 #define FLAG_POWER     7
+#define FLAG_TAN       8
+#define FLAG_ASINE      9
+#define FLAG_ACOSINE      10
+#define FLAG_ATAN      11
 
 // operation flags
 #define OP_PLUS     1
@@ -50,6 +54,10 @@
 #define OP_SINE     5
 #define OP_COSINE   6
 #define OP_POWER	7
+#define OP_TAN      8
+#define OP_ASINE    9
+#define OP_ACOSINE  10
+#define OP_ATAN     11
 
 // associativity flags
 #define LEFT	1
@@ -115,9 +123,13 @@ public:
     }
     // returns true if a token is a number
     static bool isNumber(string argument) {
+
         for(int i = 0; i < argument.length(); i++) {
-            /* if(argument[i] == '~')
-                continue;*/
+             if(argument[i] == '.')
+                continue;
+             if(argument[i] == '~')
+                continue;
+
             if(!isdigit(argument[i]))
                 return false;
         }
@@ -198,6 +210,26 @@ public:
         }
         if(op == "cos") {
             _operator.operator_name = "cos";
+            _operator.arguments = 1;
+            _operator.precedence = 0;
+        }
+        if(op == "tan") {
+            _operator.operator_name = "tan";
+            _operator.arguments = 1;
+            _operator.precedence = 0;
+        }
+        if(op == "asin") {
+            _operator.operator_name = "asin";
+            _operator.arguments = 1;
+            _operator.precedence = 0;
+        }
+        if(op == "acos") {
+            _operator.operator_name = "acos";
+            _operator.arguments = 1;
+            _operator.precedence = 0;
+        }
+        if(op == "atan") {
+            _operator.operator_name = "atan";
             _operator.arguments = 1;
             _operator.precedence = 0;
         }
@@ -317,6 +349,51 @@ public:
     virtual void setVariableValue(std::string, double);
 };
 
+//declares the content of TanFunctionElement class which is a sub class of FunctionElemet
+class TanFunctionElement: public FunctionElement {
+public:
+    TanFunctionElement();
+    string toString();
+    virtual double evaluate();
+    virtual void addArgument(FormulaElement*);
+
+    virtual void setVariableValue(std::string, double);
+};
+//declares the content of ACosineFunctionElement class which is a sub class of FunctionElemet
+class ACosineFunctionElement: public FunctionElement {
+public:
+    ACosineFunctionElement();
+    string toString();
+    virtual double evaluate();
+
+    virtual void addArgument(FormulaElement*);
+
+    virtual void setVariableValue(std::string, double);
+
+};
+
+//declares the content of ACosineFunctionElement class which is a sub class of FunctionElemet
+class ASineFunctionElement: public FunctionElement {
+public:
+    ASineFunctionElement();
+    string toString();
+    virtual double evaluate();
+    virtual void addArgument(FormulaElement*);
+
+    virtual void setVariableValue(std::string, double);
+};
+
+//declares the content of ATanFunctionElement class which is a sub class of FunctionElemet
+class ATanFunctionElement: public FunctionElement {
+public:
+    ATanFunctionElement();
+    string toString();
+    virtual double evaluate();
+    virtual void addArgument(FormulaElement*);
+
+    virtual void setVariableValue(std::string, double);
+};
+
 //declares the content of PowerFunctionElement class which is a sub class of FunctionElemet
 class PowerFunctionElement: public FunctionElement {
 protected:
@@ -346,6 +423,18 @@ public:
             case OP_COSINE:
                 out << "cos(" << StringManupulator::getStringEx(funObj) << ")";
                 break;
+            case OP_TAN:
+                out << "tan(" << StringManupulator::getStringEx(funObj) << ")";
+                break;
+            case OP_ASINE:
+                out << "asin(" << StringManupulator::getStringEx(funObj) << ")";
+                break;
+            case OP_ACOSINE:
+                out << "acos(" << StringManupulator::getStringEx(funObj) << ")";
+                break;
+            case OP_ATAN:
+                out << "atan(" << StringManupulator::getStringEx(funObj) << ")";
+                break;
             }
             return out.str();
         }
@@ -360,6 +449,18 @@ public:
             case OP_COSINE:
                 out << "cos(" << conObj->getConstant() << ")";
                 break;
+            case OP_TAN:
+                out << "tan(" << conObj->getConstant() << ")";
+                break;
+            case OP_ASINE:
+                out << "asin(" << conObj->getConstant() << ")";
+                break;
+            case OP_ACOSINE:
+                out << "acos(" << conObj->getConstant() << ")";
+                break;
+            case OP_ATAN:
+                out << "atan(" << conObj->getConstant() << ")";
+                break;
             }
             return out.str();
         }
@@ -373,6 +474,18 @@ public:
                 break;
             case OP_COSINE:
                 out << "cos(" << varObj->getName() << ")";
+                break;
+            case OP_TAN:
+                out << "tan(" << varObj->getName() << ")";
+                break;
+            case OP_ASINE:
+                out << "asin(" << varObj->getName() << ")";
+                break;
+            case OP_ACOSINE:
+                out << "acos(" << varObj->getName() << ")";
+                break;
+            case OP_ATAN:
+                out << "atan(" << varObj->getName() << ")";
                 break;
             }
             return out.str();
@@ -653,6 +766,30 @@ public:
             out << powObj->toString();
             return out.str();
         }
+        case FLAG_TAN:
+        {
+            TanFunctionElement *tanObj = dynamic_cast<TanFunctionElement*>(funObj);
+            out << tanObj->toString();
+            return out.str();
+        }
+        case FLAG_ACOSINE:
+        {
+            ACosineFunctionElement *acosObj = dynamic_cast<ACosineFunctionElement*>(funObj);
+            out << acosObj->toString();
+            return out.str();
+        }
+        case FLAG_ASINE:
+        {
+            ASineFunctionElement *asinObj = dynamic_cast<ASineFunctionElement*>(funObj);
+            out << asinObj->toString();
+            return out.str();
+        }
+        case FLAG_ATAN:
+        {
+            ATanFunctionElement *atanObj = dynamic_cast<ATanFunctionElement*>(funObj);
+            out << atanObj->toString();
+            return out.str();
+        }
         }
         return NULL;
     }
@@ -694,11 +831,32 @@ public:
             CosineFunctionElement *cosObj = dynamic_cast<CosineFunctionElement*>(funObj);
             return cosObj->evaluate();
         }
+        case FLAG_TAN:
+        {
+            TanFunctionElement *tanObj = dynamic_cast<TanFunctionElement*>(funObj);
+            return tanObj->evaluate();
+        }
+        case FLAG_ASINE:
+        {
+            ASineFunctionElement *asinObj = dynamic_cast<ASineFunctionElement*>(funObj);
+            return asinObj->evaluate();
+        }
+        case FLAG_ACOSINE:
+        {
+            ACosineFunctionElement *acosObj = dynamic_cast<ACosineFunctionElement*>(funObj);
+            return acosObj->evaluate();
+        }
+        case FLAG_ATAN:
+        {
+            ATanFunctionElement *atanObj = dynamic_cast<ATanFunctionElement*>(funObj);
+            return atanObj->evaluate();
+        }
         case FLAG_POWER:
         {
             PowerFunctionElement *powObj = dynamic_cast<PowerFunctionElement*>(funObj);
             return powObj->evaluate();
         }
+
         }
     }
 };
@@ -738,11 +896,32 @@ public:
             CosineFunctionElement *cosObj = dynamic_cast<CosineFunctionElement*>(funObj);
             return cosObj->setVariableValue(name, value);
         }
+        case FLAG_TAN:
+        {
+            TanFunctionElement *tanObj = dynamic_cast<TanFunctionElement*>(funObj);
+            return tanObj->setVariableValue(name, value);
+        }
+        case FLAG_ASINE:
+        {
+            ASineFunctionElement *asinObj = dynamic_cast<ASineFunctionElement*>(funObj);
+            return asinObj->setVariableValue(name, value);
+        }
+        case FLAG_ACOSINE:
+        {
+            ACosineFunctionElement *acosObj = dynamic_cast<ACosineFunctionElement*>(funObj);
+            return acosObj->setVariableValue(name, value);
+        }
+        case FLAG_ATAN:
+        {
+            ATanFunctionElement *atanObj = dynamic_cast<ATanFunctionElement*>(funObj);
+            return atanObj->setVariableValue(name, value);
+        }
         case FLAG_POWER:
         {
             PowerFunctionElement *powObj = dynamic_cast<PowerFunctionElement*>(funObj);
             return powObj->setVariableValue(name, value);
         }
+
         }
     }
 };

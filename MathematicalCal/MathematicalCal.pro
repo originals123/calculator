@@ -25,7 +25,11 @@ SOURCES += main.cpp\
     FormulaElement.cpp \
     DivideFunctionElement.cpp \
     CosineFunctionElement.cpp \
-    ConstantElement.cpp
+    ConstantElement.cpp \
+    TanFunctionElement.cpp \
+    ASineFunctionElement.cpp \
+    ACosineFunctionElement.cpp \
+    ATanFunctionElement.cpp
 
 HEADERS  += basic.h \
     Formulator.h

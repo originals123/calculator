@@ -1,6 +1,7 @@
 #include "Formulator.h"
 
 #include "basic.h"
+
 #include <QApplication>
 
 
