@@ -966,3 +966,311 @@ void Basic::on_btnpi_clicked()
         ui->textEdit->moveCursor(QTextCursor::End);
     }
 }
+
+void Basic::on_btndot_2_clicked()
+{
+    ui->textEdit->setText(ui->textEdit->toPlainText()+".");
+    ui->textEdit->moveCursor(QTextCursor::End);
+}
+
+void Basic::on_btn0_2_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("0");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"0");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_btn1_2_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("1");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"1");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_btn2_2_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("2");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"2");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_btn3_2_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("3");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"3");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_btn4_2_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("4");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"4");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_btn5_2_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("5");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"5");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_btn6_2_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("6");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"6");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_btn7_2_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("7");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"7");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_btn8_2_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("8");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"8");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_btn9_2_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("9");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"9");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_pushButton_41_clicked()
+{
+    if(clickedMinus==false){
+    QString text = ui->textEdit->textCursor().block().text().trimmed().toLatin1();
+    string exp=text.toStdString();
+    sumSoFar=stod(exp);
+    clickedMinus=true;
+    }else{
+        clickedMinus=true;
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"-"+QString::number(sumSoFar));
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_pushButton_42_clicked()
+{
+    sumSoFar=0.0;
+    clickedMinus=false;
+    clickedPlus=false;
+}
+
+void Basic::on_btnpcn_2_clicked()
+{
+    ui->textEdit->setText(ui->textEdit->toPlainText()+QString::number(sumSoFar));
+    ui->textEdit->moveCursor(QTextCursor::End);
+}
+
+void Basic::on_btnclr_2_clicked()
+{
+    ui->textEdit->setText("0");
+    sumSoFar=0.0;
+    clickedMinus=false;
+    clickedPlus=false;
+}
+
+void Basic::on_btnbck_2_clicked()
+{
+    QString text = ui->textEdit->toPlainText();
+         text.chop(1);
+         if (text.isEmpty()) {
+             text = "0";
+         }
+         ui->textEdit->setText(text);
+   // ui->textEdit->setText(ui->textEdit->toPlainText()+".");
+    ui->textEdit->moveCursor(QTextCursor::End);
+}
+
+void Basic::on_pushButton_38_clicked()
+{
+    ui->textEdit->setText(ui->textEdit->toPlainText()+"~");
+    ui->textEdit->moveCursor(QTextCursor::End);
+}
+
+void Basic::on_btndiv_2_clicked()
+{
+    ui->textEdit->setText(ui->textEdit->toPlainText()+"/");
+    ui->textEdit->moveCursor(QTextCursor::End);
+}
+
+void Basic::on_btnmul_2_clicked()
+{
+    ui->textEdit->setText(ui->textEdit->toPlainText()+"*");
+    ui->textEdit->moveCursor(QTextCursor::End);
+}
+
+void Basic::on_btnminus_2_clicked()
+{
+    ui->textEdit->setText(ui->textEdit->toPlainText()+"-");
+    ui->textEdit->moveCursor(QTextCursor::End);
+}
+
+void Basic::on_btnplus_2_clicked()
+{
+    ui->textEdit->setText(ui->textEdit->toPlainText()+"+");
+    ui->textEdit->moveCursor(QTextCursor::End);
+}
+
+void Basic::on_pushButton_2_clicked()
+{
+
+    QString unicodes=ui->textEdit->toPlainText();
+    QString unicodesTemp=unicodes;
+    //square root modification
+    if(unicodes.contains("\u221A",Qt::CaseInsensitive)){
+        unicodes.replace(QString("\u221A"), QString("sqrt"));
+        ui->textEdit->setText(unicodes);
+    }
+
+    //factorial modification
+    if(unicodes.contains("!"))
+    {
+        unicodes.replace(QString("!"), QString(""));
+        ui->textEdit->setText("fact("+unicodes+")");
+    }
+   QString text = ui->textEdit->textCursor().block().text().trimmed().toLatin1();
+   if(text.contains("(",Qt::CaseInsensitive) && !text.contains(")",Qt::CaseInsensitive))
+   {
+       QMessageBox messageBox;
+       messageBox.critical(0,"Error","Braces are not closed properly !");
+       messageBox.setFixedSize(500,200);
+       ui->textEdit->setText(ui->textEdit->toPlainText()+")");
+   }
+   ui->textEdit->setText(unicodesTemp);
+   string exp=text.toStdString();
+
+    vector<string> tokens;
+    vector<string> fixed;
+    vector<FormulaElement*> elements;
+    FormulaElement* f;
+
+
+    tokens = tokenize(modifyFormula(exp));
+    fixed=infixToPostfix(tokens);
+
+    elements=getObjectTokens(fixed);
+    for(int i=0;i<tokens.size();i++){
+        cout<<tokens.at(i)<<endl;
+
+    }
+
+    f = representFormula(fixed, elements);
+
+    ui->textEdit->append(QString::fromStdString(printResult(f))+"\n");
+
+    FunctionElement *func = dynamic_cast<FunctionElement*>(f);
+    vector<string> vars;
+
+    double temp;
+    //find the variable tokens in the tokenized expression vector
+    for(int i=0;i<tokens.size();i++)
+    {
+        if(FormulaElement::isVariable(tokens[i]))
+        {
+
+            vars.push_back(tokens.at(i));
+
+
+
+        }else{
+            continue;
+        }
+    }
+    //Remove duplicate variables from vector
+    vars.erase( unique( vars.begin(), vars.end() ), vars.end() );
+
+    //iterate through vars vector to set values for variables
+
+    for(int i=0;i<vars.size();i++)
+    {
+
+        bool ok;
+            QInputDialog* inputDialog = new QInputDialog();
+            inputDialog->setOptions(QInputDialog::NoButtons);
+
+            string head="Enter value for "+vars[i];
+
+            QString text =  inputDialog->getText(NULL ,head.c_str(), "Value", QLineEdit::Normal, "Enter Here", &ok);
+
+             if (ok && !text.isEmpty())
+             {
+                 func->setVariableValue(vars[i], text.toDouble());
+
+             }
+
+       // ui->textEdit->append(QString::fromStdString("Enter value for "+vars[i]+"  :"));
+
+       // temp= ui->textEdit->toPlainText().toDouble();
+
+
+       // func->setVariableValue(vars[i], temp);
+      //  ui->textEdit->append(QString::fromStdString("\n"));
+
+    }
+    //Prints the result
+
+    ui->textEdit->append(QString::number(printEvaluation(func)));
+
+    //set cursor position to last line
+    ui->textEdit->setFocus();
+    ui->textEdit->moveCursor (QTextCursor::End);
+}

@@ -98,6 +98,50 @@ private slots:
 
     void on_btnpi_clicked();
 
+    void on_pushButton_2_clicked();
+
+    void on_btndot_2_clicked();
+
+    void on_btn0_2_clicked();
+
+    void on_btn1_2_clicked();
+
+    void on_btn2_2_clicked();
+
+    void on_btn3_2_clicked();
+
+    void on_btn4_2_clicked();
+
+    void on_btn5_2_clicked();
+
+    void on_btn6_2_clicked();
+
+    void on_btn7_2_clicked();
+
+    void on_btn8_2_clicked();
+
+    void on_btn9_2_clicked();
+
+    void on_pushButton_41_clicked();
+
+    void on_pushButton_42_clicked();
+
+    void on_btnpcn_2_clicked();
+
+    void on_btnclr_2_clicked();
+
+    void on_btnbck_2_clicked();
+
+    void on_pushButton_38_clicked();
+
+    void on_btndiv_2_clicked();
+
+    void on_btnmul_2_clicked();
+
+    void on_btnminus_2_clicked();
+
+    void on_btnplus_2_clicked();
+
 private:
 Ui::Basic *ui;
 };
