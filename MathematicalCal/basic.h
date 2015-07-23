@@ -84,6 +84,20 @@ private slots:
 
     void on_pushButton_32_clicked();
 
+    void on_pushButton_17_clicked();
+
+    void on_pushButton_29_clicked();
+
+    void on_pushButton_28_clicked();
+
+    void on_pushButton_35_clicked();
+
+    void on_pushButton_27_clicked();
+
+    void on_pushButton_30_clicked();
+
+    void on_btnpi_clicked();
+
 private:
 Ui::Basic *ui;
 };

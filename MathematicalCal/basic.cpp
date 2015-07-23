@@ -4,7 +4,7 @@
 #include "QInputDialog"
 #include "QDir"
 #include "QTextBlock"
-
+#include "QMessageBox"
 
 Basic::Basic(QWidget *parent) :
     QMainWindow(parent),
@@ -29,6 +29,7 @@ bool clickedPlus=false;
 bool clickedMinus=false;
 // modify formula notation
 string modifyFormula(string argument) {
+
     string return_str;
     string spaces;
     char prev_char, cur_char, next_char;
@@ -58,6 +59,7 @@ string modifyFormula(string argument) {
             if(isalpha(next_char))
                 return_str += "*";
     }
+
     return return_str;
 }
 
@@ -150,6 +152,7 @@ vector<string> infixToPostfix(vector<string> formula) {
         return_vec.push_back(operator_stack.top());
         operator_stack.pop();
     }
+
     return return_vec;
 
 
@@ -190,6 +193,12 @@ FormulaElement* getElement(string s) {
     if(s == "atan") {
         return new ATanFunctionElement;
     }
+    if(s == "sqrt") {
+        return new SqrtFunctionElement;
+    }
+    if(s == "fact") {
+        return new FactFunctionElement;
+    }
     if(FormulaElement::isVariable(s)) {
         return new VariableElement(s);
     }
@@ -219,6 +228,7 @@ vector<FormulaElement*> getObjectTokens(vector<string> postfix) {
         if(FormulaElement::isFunction(postfix[i]))
             return_vec.push_back(getElement(postfix[i]));
     }
+
     return return_vec;
 }
 
@@ -227,12 +237,12 @@ FormulaElement* representFormula(vector<string> tokens, vector<FormulaElement*> 
     stack<FormulaElement*> Obj_buffer2;
     int i;
 
-
     for(i = 0; i < tokens.size(); i++) {
         if(FormulaElement::isNumber(tokens[i]) || FormulaElement::isVariable(tokens[i]))
             Obj_buffer1.push(objTokens[i]);
     else {
             FunctionElement* funObj = dynamic_cast<FunctionElement*>(objTokens[i]);
+
             OperatorInfo op_info = FormulaElement::getOPInfo(tokens[i]);
             int args = op_info.arguments;
             while(args  > 0) {
@@ -326,6 +336,16 @@ string printResult(FormulaElement *funObj) {
           return powObj->toString();
             break;
         }
+        case FLAG_SQRT: {
+            SqrtFunctionElement* sqrtObj = dynamic_cast<SqrtFunctionElement*>(funObj);
+             return sqrtObj->toString();
+            break;
+        }
+        case FLAG_FACT: {
+            FactFunctionElement* factObj = dynamic_cast<FactFunctionElement*>(funObj);
+             return factObj->toString();
+            break;
+        }
         }
         break;
     }
@@ -404,6 +424,16 @@ double printEvaluation(FormulaElement *funObj) {
               return powObj->evaluate();
             break;
         }
+        case FLAG_SQRT: {
+            SqrtFunctionElement* sqrtObj = dynamic_cast<SqrtFunctionElement*>(funObj);
+             return sqrtObj->evaluate();
+            break;
+        }
+        case FLAG_FACT: {
+            FactFunctionElement* factObj = dynamic_cast<FactFunctionElement*>(funObj);
+             return factObj->evaluate();
+            break;
+        }
         }
         break;
     }
@@ -415,13 +445,36 @@ double printEvaluation(FormulaElement *funObj) {
 void Basic::on_pushButton_clicked()
 {
 
-    //string exp=ui->textEdit->toPlainText().toStdString();
+    QString unicodes=ui->textEdit->toPlainText();
+    QString unicodesTemp=unicodes;
+    //square root modification
+    if(unicodes.contains("\u221A",Qt::CaseInsensitive)){
+        unicodes.replace(QString("\u221A"), QString("sqrt"));
+        ui->textEdit->setText(unicodes);
+    }
+
+    //factorial modification
+    if(unicodes.contains("!"))
+    {
+        unicodes.replace(QString("!"), QString(""));
+        ui->textEdit->setText("fact("+unicodes+")");
+    }
    QString text = ui->textEdit->textCursor().block().text().trimmed().toLatin1();
+   if(text.contains("(",Qt::CaseInsensitive) && !text.contains(")",Qt::CaseInsensitive))
+   {
+       QMessageBox messageBox;
+       messageBox.critical(0,"Error","Braces are not closed properly !");
+       messageBox.setFixedSize(500,200);
+       ui->textEdit->setText(ui->textEdit->toPlainText()+")");
+   }
+   ui->textEdit->setText(unicodesTemp);
    string exp=text.toStdString();
+
     vector<string> tokens;
     vector<string> fixed;
     vector<FormulaElement*> elements;
     FormulaElement* f;
+
 
     tokens = tokenize(modifyFormula(exp));
     fixed=infixToPostfix(tokens);
@@ -429,11 +482,11 @@ void Basic::on_pushButton_clicked()
     elements=getObjectTokens(fixed);
     for(int i=0;i<tokens.size();i++){
         cout<<tokens.at(i)<<endl;
-        cout<<"go2";
+
     }
 
     f = representFormula(fixed, elements);
-cout<<"go3";
+
     ui->textEdit->append(QString::fromStdString(printResult(f))+"\n");
 
     FunctionElement *func = dynamic_cast<FunctionElement*>(f);
@@ -491,6 +544,7 @@ cout<<"go3";
 
     //set cursor position to last line
     ui->textEdit->setFocus();
+    ui->textEdit->moveCursor (QTextCursor::End);
 
 
 
@@ -823,6 +877,92 @@ void Basic::on_pushButton_32_clicked()
     ui->textEdit->moveCursor(QTextCursor::End);
     }else{
         ui->textEdit->setText(ui->textEdit->toPlainText()+"atan");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_pushButton_17_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+        ui->textEdit->setText("\u221A");
+        ui->textEdit->moveCursor (QTextCursor::End);
+        ui->textEdit->insertPlainText("(");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"\u221A"+"(");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_pushButton_29_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("!");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"!");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_pushButton_28_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("10^");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"10^");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_pushButton_35_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("^2");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"^2");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_pushButton_27_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("^");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"^");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_pushButton_30_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("^3");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"^3");
+        ui->textEdit->moveCursor(QTextCursor::End);
+    }
+}
+
+void Basic::on_btnpi_clicked()
+{
+    string str=ui->textEdit->toPlainText().toStdString();
+    if(str=="0"){
+    ui->textEdit->setText("3.14159");
+    ui->textEdit->moveCursor(QTextCursor::End);
+    }else{
+        ui->textEdit->setText(ui->textEdit->toPlainText()+"3.14159");
         ui->textEdit->moveCursor(QTextCursor::End);
     }
 }

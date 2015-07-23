@@ -16,6 +16,7 @@
 #include "iterator"
 #include "math.h"
 #include "set"
+#include "Functions.h"
 
 #include <iostream>
 #include <cstring>
@@ -42,9 +43,13 @@
 #define FLAG_COSINE    6
 #define FLAG_POWER     7
 #define FLAG_TAN       8
-#define FLAG_ASINE      9
-#define FLAG_ACOSINE      10
+#define FLAG_ASINE     9
+#define FLAG_ACOSINE   10
 #define FLAG_ATAN      11
+#define FLAG_SQRT      12
+#define FLAG_FACT      13
+#define FLAG_NPR       14
+#define FLAG_NCR       15
 
 // operation flags
 #define OP_PLUS     1
@@ -58,6 +63,12 @@
 #define OP_ASINE    9
 #define OP_ACOSINE  10
 #define OP_ATAN     11
+#define OP_SQRT     12
+#define OP_FACT     13
+#define OP_NPR     14
+#define OP_NCR     15
+
+
 
 // associativity flags
 #define LEFT	1
@@ -103,8 +114,38 @@ public:
 
     //method to evaluate functionlity.Appears in every subclass for its specific evaluation.
     virtual double evaluate() = 0;
+//computes npr and ncr
+    int nCr(int n, int r) {
+       if(r>n) {
+          printf("FATAL ERROR"); return 0;
+         }
+       if(n==0 || r==0 || n==r) {
+          return 1;
+       } else {
+          return (int)lround( ((double)n/(double)(n-r)/(double)r) * exp(lgamma(n) - lgamma(n-r) - lgamma(r)));
+       }
+    }
 
 
+    int nPr(int n, int r) {
+       if(r>n) {printf("FATAL ERROR"; return 0;}
+       if(n==0 || r==0) {
+          return 1;
+       } else {
+          if (n==r) {
+             r = n - 1;
+          }
+          return (int)lround( ((double)n/(double)(n-r)) * exp(lgamma(n) - lgamma(n-r)));
+       }
+    }
+    //computes the factorial
+    inline int factorial(double n)
+    {
+        if (n == 1)
+            return 1;
+        else
+            return n * factorial(n - 1);
+    }
     // returns true if a token is a function
     static bool isFunction(string argument) {
         if(argument == "sin")
@@ -113,6 +154,22 @@ public:
             return true;
         if(argument == "tan")
             return true;
+        if(argument == "asin")
+            return true;
+        if(argument == "acos")
+            return true;
+        if(argument == "atan")
+            return true;
+        if(argument == "sqrt")
+            return true;
+        if(argument == "fact")
+            return true;
+        if(argument == "npr")
+            return true;
+        if(argument == "ncr")
+            return true;
+
+
         return false;
     }
     // returns true if a token is a variable
@@ -147,6 +204,7 @@ public:
             return true;
         if(argument == "^")
             return true;
+
         return false;
     }
 
@@ -233,6 +291,27 @@ public:
             _operator.arguments = 1;
             _operator.precedence = 0;
         }
+        if(op == "sqrt") {
+            _operator.operator_name = "sqrt";
+            _operator.arguments = 1;
+            _operator.precedence = 0;
+        }
+        if(op == "fact") {
+            _operator.operator_name = "fact";
+            _operator.arguments = 1;
+            _operator.precedence = 0;
+        }
+        if(op == "npr") {
+            _operator.operator_name = "npr";
+            _operator.arguments = 2;
+            _operator.precedence = 0;
+        }
+        if(op == "ncr") {
+            _operator.operator_name = "ncr";
+            _operator.arguments = 2;
+            _operator.precedence = 0;
+        }
+
         if(op == ")" || op == "(") {
             _operator.precedence = 0;
         }
@@ -372,7 +451,7 @@ public:
 
 };
 
-//declares the content of ACosineFunctionElement class which is a sub class of FunctionElemet
+//declares the content of AsineFunctionElement class which is a sub class of FunctionElemet
 class ASineFunctionElement: public FunctionElement {
 public:
     ASineFunctionElement();
@@ -406,6 +485,27 @@ public:
     string toString();
     virtual double evaluate();
 };
+//declares the content of SqrtFunctionElement class which is a sub class of FunctionElemet
+class SqrtFunctionElement: public FunctionElement {
+public:
+    SqrtFunctionElement();
+    string toString();
+    virtual double evaluate();
+    virtual void addArgument(FormulaElement*);
+
+    virtual void setVariableValue(std::string, double);
+};
+//declares the content of FactFunctionElement class which is a sub class of FunctionElemet
+class FactFunctionElement: public FunctionElement {
+public:
+    FactFunctionElement();
+    string toString();
+    virtual double evaluate();
+    virtual void addArgument(FormulaElement*);
+
+    virtual void setVariableValue(std::string, double);
+};
+
 
 class StringManupulator {
 public:
@@ -435,6 +535,12 @@ public:
             case OP_ATAN:
                 out << "atan(" << StringManupulator::getStringEx(funObj) << ")";
                 break;
+            case OP_SQRT:
+                out << "sqrt(" << StringManupulator::getStringEx(funObj) << ")";
+                break;
+            case OP_FACT:
+                out << "fact(" << StringManupulator::getStringEx(funObj) << ")";
+                break;
             }
             return out.str();
         }
@@ -461,6 +567,12 @@ public:
             case OP_ATAN:
                 out << "atan(" << conObj->getConstant() << ")";
                 break;
+            case OP_SQRT:
+                out << "sqrt(" << conObj->getConstant() << ")";
+                break;
+            case OP_FACT:
+                out << "fact(" << conObj->getConstant() << ")";
+                break;
             }
             return out.str();
         }
@@ -486,6 +598,12 @@ public:
                 break;
             case OP_ATAN:
                 out << "atan(" << varObj->getName() << ")";
+                break;
+            case OP_SQRT:
+                out << "sqrt(" << varObj->getName() << ")";
+                break;
+            case OP_FACT:
+                out << "fact(" << varObj->getName() << ")";
                 break;
             }
             return out.str();
@@ -790,6 +908,18 @@ public:
             out << atanObj->toString();
             return out.str();
         }
+        case FLAG_SQRT:
+        {
+            SqrtFunctionElement *sqrtObj = dynamic_cast<SqrtFunctionElement*>(funObj);
+            out << sqrtObj->toString();
+            return out.str();
+        }
+        case FLAG_FACT:
+        {
+            FactFunctionElement *factObj = dynamic_cast<FactFunctionElement*>(funObj);
+            out << factObj->toString();
+            return out.str();
+        }
         }
         return NULL;
     }
@@ -856,7 +986,16 @@ public:
             PowerFunctionElement *powObj = dynamic_cast<PowerFunctionElement*>(funObj);
             return powObj->evaluate();
         }
-
+        case FLAG_SQRT:
+        {
+            SqrtFunctionElement *sqrtObj = dynamic_cast<SqrtFunctionElement*>(funObj);
+            return sqrtObj->evaluate();
+        }
+        case FLAG_FACT:
+        {
+            FactFunctionElement *factObj = dynamic_cast<FactFunctionElement*>(funObj);
+            return factObj->evaluate();
+        }
         }
     }
 };
@@ -921,7 +1060,16 @@ public:
             PowerFunctionElement *powObj = dynamic_cast<PowerFunctionElement*>(funObj);
             return powObj->setVariableValue(name, value);
         }
-
+        case FLAG_SQRT:
+        {
+            SqrtFunctionElement *sqrtObj = dynamic_cast<SqrtFunctionElement*>(funObj);
+            return sqrtObj->setVariableValue(name, value);
+        }
+        case FLAG_FACT:
+        {
+            FactFunctionElement *factObj = dynamic_cast<FactFunctionElement*>(funObj);
+            return factObj->setVariableValue(name, value);
+        }
         }
     }
 };

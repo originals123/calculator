@@ -815,8 +815,8 @@
      <widget class="QPushButton" name="btnrbrkt">
       <property name="geometry">
        <rect>
-        <x>280</x>
-        <y>210</y>
+        <x>430</x>
+        <y>160</y>
         <width>41</width>
         <height>41</height>
        </rect>
@@ -841,8 +841,8 @@
      <widget class="QPushButton" name="pushButton_28">
       <property name="geometry">
        <rect>
-        <x>380</x>
-        <y>160</y>
+        <x>230</x>
+        <y>110</y>
         <width>41</width>
         <height>41</height>
        </rect>
@@ -854,8 +854,8 @@
      <widget class="QPushButton" name="btnlbrkt">
       <property name="geometry">
        <rect>
-        <x>230</x>
-        <y>210</y>
+        <x>380</x>
+        <y>160</y>
         <width>41</width>
         <height>41</height>
        </rect>
@@ -919,7 +919,7 @@
      <widget class="QPushButton" name="pushButton_17">
       <property name="geometry">
        <rect>
-        <x>230</x>
+        <x>280</x>
         <y>60</y>
         <width>41</width>
         <height>41</height>
@@ -945,19 +945,6 @@
        <string>sin</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_25">
-      <property name="geometry">
-       <rect>
-        <x>280</x>
-        <y>60</y>
-        <width>41</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>xsqrt</string>
-      </property>
-     </widget>
      <widget class="QPushButton" name="pushButton_16">
       <property name="geometry">
        <rect>
@@ -975,7 +962,7 @@
       <property name="geometry">
        <rect>
         <x>230</x>
-        <y>110</y>
+        <y>60</y>
         <width>41</width>
         <height>41</height>
        </rect>

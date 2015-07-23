@@ -29,9 +29,12 @@ SOURCES += main.cpp\
     TanFunctionElement.cpp \
     ASineFunctionElement.cpp \
     ACosineFunctionElement.cpp \
-    ATanFunctionElement.cpp
+    ATanFunctionElement.cpp \
+    SqrtFunctionElement.cpp \
+    FactFunctionElement.cpp
 
 HEADERS  += basic.h \
-    Formulator.h
+    Formulator.h \
+    Functions.h
 
 FORMS    += basic.ui
